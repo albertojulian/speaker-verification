@@ -1,7 +1,7 @@
 # Speaker Verification
 Implementation of Google's Speaker Verification for Android: enrollment based on "OK Google" repetition. 
 
-This repository implements Android Speaker Verification paper: [GE2E loss](https://arxiv.org/abs/1710.10467).
+This repository implements Android Speaker Verification paper: [Generalised End to End (GE2E) loss for Speaker Verification](https://arxiv.org/abs/1710.10467).
 
 [Here is a Video of presentation and demo](https://www.youtube.com/watch?v=sSPnZogKkd8)
 
@@ -42,15 +42,13 @@ During training mode, the preprocessed mel spectrogram frames for each speaker a
 
 The Speaker Encoder was trained along 1 million steps during 11 hours in Google Colab Pro.
 
-Training mode can be started from:
-* train.py
-* VoxCeleb1 EDA.ipynb
+Training mode is started from train.py.
 
 ## Comments about the training
 - There are no epochs because there is not a repeating dataset: at each step, the speakers and utterances are randomly sampled.
 - The system is self-supervised: at each batch, the labels are the speaker order in that specific batch
 
-## Enrollment or inference
+## Enrollment / inference
 In inference mode the following steps are followed:
 * a short audio is recorded from a speaker, potentially not trained in the model
 * the audio is preprocessed with the feature extraction steps
@@ -58,4 +56,12 @@ In inference mode the following steps are followed:
 * the batch is presented to the trained model to get the output embeddings
 * the output embeddings are averaged, thus resulting a unique embedding for the speaker
 
-Inference mode is entered by executing test.py
+Enrollment / Inference mode is entered by executing:
+- test.py
+- Speaker_Verification.ipynb
+
+There is also a small client based on the platform anvil which can communicate with the anvil server in `anvil_server.py`
+
+Next figure shows a UMAP 2D projection of seven speaker enrollments, each with four utterances.
+
+<img src="readme_files/umap.png" alt="UMAP of seven speaker enrollments" width="500" height="300" />

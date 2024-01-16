@@ -1,0 +1,84 @@
+rel_path : "./VoxCeleb1/"
+dataset_name : "VoxCeleb1"
+dataset_ratio : 1.0
+raw_data_folder : "wav"
+proc_data_folder : "mel"
+enroll_folder : "wav_enroll"
+verify_folder : "wav_verify"
+dsr_enrolled_file : "dsr_enrolled.csv"
+
+## Audio sampling rate
+sampling_rate_common : 16000
+
+## Voice Activation Detection
+# Window size of the VAD. Must be either 10, 20 or 30 milliseconds.
+# This sets the granularity of the VAD. Should not need to be changed.
+vad_window_length : 30  # In milliseconds
+# Number of frames to average together when performing the moving average smoothing.
+# The larger this value, the larger the VAD variations must be to not get smoothed out.
+vad_moving_average_width : 8
+# Maximum number of consecutive silent frames a segment can have.
+vad_max_silence_length : 6
+
+## Audio volume normalization
+audio_norm_target_dBFS : -30
+
+## Mel-filterbank
+mel_window_length : 25  # In milliseconds
+mel_window_step : 10    # In milliseconds
+
+mel_n_channels : 40 #  number of Mel Spectrogram energy bands; 40 in GE2E, 80 in Tacotron 2
+# Number of spectrogram frames in a partial utterance (training)
+partials_n_frames : 160     # 1600 ms
+# Number of spectrogram frames in sliding window (inference or enroll)
+inference_n_frames : 80     #  800 ms
+
+# wav processing is not forced by default, so if there is already a file for a speaker,
+#  its wav files are not processed
+force_proc : False
+
+# if repeat_batch True, trains only on the first batch to check the encoder can overfit with a static batch
+repeat_batch : False
+
+speakers_per_batch : 16 # consider 16, 32, 64
+utterances_per_speaker : 8
+
+n_nodes : 128 # 768 in the paper
+n_dim_out : 128 # 256?
+# Adam optimizer default parameters
+learning_rate : 0.001 # default; should decrease with training
+beta_1 : 0.9 # default
+beta_2 : 0.999 # default
+
+# w and b for the similarity matrix
+similarity_weight : 10 # 10 in the original paper
+similarity_bias : -5 # -5 in the original paper
+
+# updated in saved config dict
+current_step : 1
+
+# for each step a batch is generated
+print_every_n_step : 10
+
+checkpoint_path : "checkpoint"
+checkpoints_bk_path : "checkpoints_bk"
+speaker_config_dict_pkl : "speaker_config_dict.pkl"
+speaker_model_checkpoint : "speaker_checkpoint"
+# NORMAL: save True, load True
+# RESET: save True, Load False allows to ignore previous saving (like removing the checkpoint foder)
+# (next session will probably have Load True)
+# PLAY FROM SAVED: save False, Load True allows a training session without overwriting saved values
+# PLAY FROM ZERO: save False, load False
+# TODO: Create session dict? Load True takes params (save_mode, max_session_steps) from saved config
+# WORK-AROUND: Delete checkpoint/speaker_config_dict.pkl
+save_mode : True
+load_mode : True
+save_every_n_step : 500
+
+max_session_steps : 1000
+
+plot_history : True
+
+eager_tensor_mode : True
+
+num_workers :  0 # SpeakerVerificationDataLoader in train.py; 8 in some implementation, but in Mac I have to put 0

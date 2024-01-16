@@ -1,0 +1,14 @@
+anvil-uplink
+webrtcvad
+librosa
+tqdm
+tensorflow
+PyYAML
+pandas
+numpy
+numba
+scipy
+scikit-learn
+matplotlib
+torch
+SoundFile

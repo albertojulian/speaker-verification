@@ -3,22 +3,24 @@ This project was initially intended as part of a zero-shot multi-speaker Text-To
 
 <img src="readme_files/global_view.png" alt="Zero-shot multi-speaker TTS" width="800" height="450" />
 
-Finally, only the Speaker Encoder part was implemented, which is Google's Speaker Verification for Android that supports enrollment based on "OK Google" repetition, and described in Android Speaker Verification paper: [Generalised End to End (GE2E) loss for Speaker Verification](https://arxiv.org/abs/1710.10467) with modifications in the first mentioned paper. However, in order to have significant embeddings, this implementation is not limited to verify "OK Google", and the speaker can emit any sentence with a duration of 5-10 seconds.
+The Speaker Encoder system creates a **speaker embedding space** to characterize a new speaker. The embedding of the new speaker is used to condition the Synthesizer, so that the mel-spectrograms at the end are modified with the new speaker's features.
+
+However, finally only the Speaker Encoder part was implemented in 2021, which is Google's Speaker Verification for Android that supports enrollment based on "OK Google" repetition, and described in Android Speaker Verification paper: [Generalised End to End (GE2E) loss for Speaker Verification](https://arxiv.org/abs/1710.10467) with modifications in the first mentioned paper. However, in order to have significant embeddings, this implementation is not limited to verify "OK Google", and the speaker can emit any sentence with a duration of 5-10 seconds.
 
 [Here is a Video of presentation and demo](https://www.youtube.com/watch?v=sSPnZogKkd8)
 
-A main point of this system is being able to verify a speaker without having to re-train the system. This is achieved thanks to the following features:
+A main point of this system is the ability to verify a speaker without having to re-train the system. This is achieved thanks to the following features:
 - the system trained with a big number of speakers creates a **speaker embedding space**
 - an enrollment process (described later) defines the embeddings for a new speaker 
-
-The "Transfer Learning" system leverages on the **speaker embedding space** to characterize a new speaker
-The embedding of the new speaker is used to condition the Synthesizer, so that the mel-spectrograms at the end are modified with the new speaker's features
 
 There is a SpeakerEncoder.yaml configuration file with the parameters of the different stages, which is loaded as a python dictionary.
 
 ## Dataset loading
 
-The implementation described in the paper used several datasets: VoxCeleb1, VoxCeleb2 and a Google internal dataset.
+The implementation described in the "Transfer Learning" paper used several datasets: 
+* VoxCeleb1, composed of 1200 speakers and 149.000 utterances
+* VoxCeleb2, composed of 6000 speakers and 1.09M utterances 
+* other datasets.
 
 This version of the Speaker Encoder has been trained just with the dataset VoxCeleb1, which must be downloaded from:
 
@@ -43,12 +45,12 @@ Next figure shows the **preprocessing** and **feature extraction** steps:
 
 The output of the feature extraction mode is a dictionary for each speaker with all the mel spectrogram frames resulting of preprocessing all the wav files from that speaker. This dictionary is saved as a pickle file.
 
-Feature extraction is performed by executing feature_extraction.py
+Preprocessing and feature extraction are performed by executing `feature_extraction.py`
 
 ## Training
 During the **training** step, the model is trained with batches obtained after the **feature extraction** step:
-* three LSTM layers process the batches
-* a linear layer at the end gives speaker embeddings as the output
+* a stack of three LSTM layers process the batches
+* a linear layer at the end generates a **speaker embeddings space** as the output
 * centroids and similarity matrix for the speakers in the batch are computed
 * the loss is computed
 
@@ -58,7 +60,7 @@ Next figure shows the **training** step:
 
 The Speaker Encoder was trained along 500.000 steps during 11 hours in Google Colab Pro.
 
-Training mode is started from train.py.
+Training mode is started from `train.py`.
 
 ## Comments about the training
 - There are no epochs because there is not a repeating dataset: at each step, the speakers and utterances are randomly sampled.

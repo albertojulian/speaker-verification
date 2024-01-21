@@ -19,7 +19,7 @@ There is a SpeakerEncoder.yaml configuration file with the parameters of the dif
 
 The implementation described in the "Transfer Learning" paper used several datasets: 
 * VoxCeleb1, composed of 1200 speakers and 149.000 utterances
-* VoxCeleb2, composed of 6000 speakers and 1.09M utterances 
+* VoxCeleb2, composed of 6000 speakers and 1,09M utterances 
 * other datasets.
 
 This version of the Speaker Encoder has been trained just with the dataset VoxCeleb1, which must be downloaded from:
@@ -43,13 +43,13 @@ Next figure shows the **preprocessing** and **feature extraction** steps:
 
 <img src="readme_files/prepro_feature-extraction.png" alt="Preprocessing and feature extraction" width="800" height="350" />
 
-The output of the feature extraction mode is a dictionary for each speaker with all the mel spectrogram frames resulting of preprocessing all the wav files from that speaker. This dictionary is saved as a pickle file.
+The output of the feature extraction mode is a folder for each speaker with all the mel spectrogram frames resulting of preprocessing all the wav files from that speaker.
 
 Preprocessing and feature extraction are performed by executing `feature_extraction.py`
 
 ## Training
 During the **training** step, the model is trained with batches obtained after the **feature extraction** step:
-* a stack of three LSTM layers process the batches
+* a stack of three LSTM layers processes the batches
 * a linear layer at the end generates a **speaker embeddings space** as the output
 * centroids and similarity matrix for the speakers in the batch are computed
 * the loss is computed
@@ -62,7 +62,7 @@ The Speaker Encoder was trained along 500.000 steps during 11 hours in Google Co
 
 Training mode is started from `train.py`.
 
-## Comments about the training
+### Comments about the training
 - There are no epochs because there is not a repeating dataset: at each step, the speakers and utterances are randomly sampled.
 - The system is self-supervised: at each batch, the labels are the speaker order in that specific batch
 
@@ -76,11 +76,11 @@ In inference mode the following steps are followed:
 
 <img src="readme_files/voice-cloning-inference.png" alt="voice-cloning-inference" width="800" height="400" />
 
-Inference mode is entered by executing:
-- test.py
-- Speaker_Verification.ipynb
+Inference mode is entered by executing `test.py`.
 
-### Speaker enrollment
+## Speaker Enrollment and Verification
+
+### Speaker Enrollment
 Next figure describes the speaker enrollment process:
 
 <img src="readme_files/enrollment.png" alt="enrollment" width="800" height="400" />
@@ -99,3 +99,5 @@ There is also a simple client based on the platform anvil which can communicate 
 Next figure shows a UMAP 2D projection of seven speaker enrollments, each with four utterances.
 
 <img src="readme_files/umap.png" alt="UMAP of seven speaker enrollments" width="500" height="300" />
+
+The plot demonstrates the Speaker Enrollment and Verification works properly since there is no overlapping between enrollment regions. However, increasing the training dataset (for instance, adding the VoxCeleb2 dataset, much bigger than VoxCeleb1) would probably generate better separated enrollment regions.
